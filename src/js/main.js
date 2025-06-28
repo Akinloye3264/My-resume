@@ -355,27 +355,93 @@ function handleFormSubmission(e) {
     
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
+    const formStatus = document.getElementById('form-status');
     const originalText = submitBtn.innerHTML;
+    
+    // Basic form validation
+    const name = form.querySelector('#name').value.trim();
+    const email = form.querySelector('#email').value.trim();
+    const subject = form.querySelector('#subject').value.trim();
+    const message = form.querySelector('#message').value.trim();
+    
+    if (!name || !email || !subject || !message) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showNotification('Please enter a valid email address.', 'error');
+        return;
+    }
     
     // Show loading state
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitBtn.disabled = true;
     
-    // Simulate form submission
-    setTimeout(() => {
+    // Clear previous status
+    if (formStatus) {
+        formStatus.innerHTML = '';
+        formStatus.className = 'form-status';
+    }
+    
+    // Get form data
+    const formData = new FormData(form);
+    
+    // Submit to Formspree
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Network response was not ok');
+        }
+    })
+    .then(data => {
+        // Success
         showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
         form.reset();
+        
+        if (formStatus) {
+            formStatus.innerHTML = '<div class="success-message"><i class="fas fa-check-circle"></i> Message sent successfully!</div>';
+            formStatus.className = 'form-status success';
+        }
+    })
+    .catch(error => {
+        // Error
+        console.error('Form submission error:', error);
+        showNotification('Sorry, there was an error sending your message. Please try again.', 'error');
+        
+        if (formStatus) {
+            formStatus.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-circle"></i> Error sending message. Please try again.</div>';
+            formStatus.className = 'form-status error';
+        }
+    })
+    .finally(() => {
+        // Reset button
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
-    }, 2000);
+    });
 }
 
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
+    
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <i class="fas fa-${icon}"></i>
             <span>${message}</span>
         </div>
     `;
@@ -384,14 +450,15 @@ function showNotification(message, type = 'info') {
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${type === 'success' ? 'var(--success)' : 'var(--primary)'};
+        background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : 'var(--primary-blue)'};
         color: white;
         padding: 1rem 1.5rem;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-glow);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 20px ${type === 'success' ? 'rgba(34, 197, 94, 0.3)' : type === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(37, 99, 235, 0.3)'};
         z-index: 10000;
         animation: slideInRight 0.5s ease;
         font-weight: 500;
+        max-width: 300px;
     `;
     
     document.body.appendChild(notification);

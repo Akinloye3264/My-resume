@@ -888,7 +888,7 @@ header {
 
 /* ===== FORM ===== */
 .form {
-    background: var(--light-blue);
+    background: var(--primary-blue);
     padding: 3rem;
     border-radius: 20px;
     border: 1px solid var(--gray-200);
@@ -1160,7 +1160,7 @@ footer {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-blue);
+    background: var(--accent-blue);
 }
 
 /* ===== LOADING ANIMATION ===== */
@@ -2385,5 +2385,101 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
+  background: var(--accent-blue);
+}
+
+/* ===== FORM STATUS STYLES ===== */
+.form-status {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.form-status.success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-status.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-status .success-message,
+.form-status .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-status i {
+    font-size: 1.1rem;
+}
+
+/* ===== NOTIFICATION STYLES ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary-blue);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+    z-index: 10000;
+    animation: slideInRight 0.5s ease;
+    font-weight: 500;
+    max-width: 300px;
+}
+
+.notification.success {
+    background: #22c55e;
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+}
+
+.notification.error {
+    background: #ef4444;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.notification i {
+    font-size: 1.1rem;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 } 
